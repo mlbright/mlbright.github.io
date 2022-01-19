@@ -3,7 +3,7 @@
 For several years, my main responsibility at work was [GitHub Enterprise][enterprise] Site administration.
 Here is a collection of thoughts, in no particular order.
 
-Last updated: 2022-jan-19
+_Last updated: 2022-jan-19_
 
 ### Rate Limiting
 

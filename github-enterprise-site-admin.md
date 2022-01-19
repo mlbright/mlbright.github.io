@@ -26,11 +26,19 @@ It's a more secure and better scheme for integrating with the server.
 It also avoids the "service account" pattern, for which a shared user account is created to perform a role.
 GitHub Apps are first class actors in GitHub, but do not consume an Enterprise license.
 
+When I was an admin, there wasn't a way to install a GitHub App on all organizations.
+However, this can be very useful and [someone wrote a script to do it][app-script].
+
 ### GitHub.com
 
 Ask yourself if your organization really needs GitHub Enterprise as opposed to [GitHub.com][dotcom].
 Do you really need the headache of administering your own instance?
 Be aware that new features are always rolled out to GitHub.com first, and often do not appear in Enterprise until 6 or more months later.
+
+### Hubble
+
+If you run GitHub Enterprise, you will need to have a sense of its usage that goes beyond what is provided by GitHub.
+There's a third party tool for that: [Hubble][hubble].
 
 ### Delegate to organization owners
 
@@ -108,6 +116,9 @@ Answer it frequently and collect common questions into the user facing documenta
 
 Consider separating the Git and GitHub concerns into 2 channels, but understand that this may also confuse users when issues straddle both things.
 
+Have an explicit and documented support policy on the user facing documentation site.
+This should set expectations about support on the Slack channel.
+
 ### Default to "Open"
 
 - Favor public repositories to facilitate collaboration and _discovery_.
@@ -121,10 +132,7 @@ I'm betting the next high severity issue will also be.
 Best to simply turn the feature off.
 
 Users will find other destinations to publish the source of their web sites, documentation, or whatever.
-This cleanly separates the concerns of _development_, which lie with GitHub, from the concerns of _publication or hosting_.
-
-
-
+This cleanly separates the concerns of collaborating around _development_, which lie with GitHub, from the concerns of _publication or hosting_.
 
 [dotcom]: https://github.com
 [enterprise]: https://github.com/enterprise
@@ -133,3 +141,6 @@ This cleanly separates the concerns of _development_, which lie with GitHub, fro
 [docs]: https://docs.github.com/en/enterprise-server@3.3
 [push-limits]]: https://docs.github.com/en/enterprise-server@3.1/admin/policies/enforcing-policies-for-your-enterprise/enforcing-repository-management-policies-in-your-enterprise#enforcing-a-policy-for-git-push-limits
 [logforwarding]: https://docs.github.com/en/enterprise-server@3.3/admin/user-management/monitoring-activity-in-your-enterprise/log-forwarding
+[pages]: https://docs.github.com/en/enterprise-server@3.3/pages/getting-started-with-github-pages/about-github-pages
+[app-script]: https://gist.github.com/stoe/2eae33bd3d097a59b4a75e997a14c54d
+[Hubble]: https://github.com/Autodesk/hubble

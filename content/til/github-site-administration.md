@@ -1,13 +1,10 @@
 +++
-title = "GitHub site administration"
+title = "GitHub Enterprise site administration"
 date = 2022-02-05
 +++
-## GitHub Enterprise Site Administration
 
 For several years, my main responsibility at work was [GitHub Enterprise][enterprise] system administration.
-Here is a collection of thoughts, in no particular order.
-
-_Last updated: 2022-jan-19_
+Here is a collection of thoughts about the experience, in no particular order.
 
 ### Rate Limiting
 

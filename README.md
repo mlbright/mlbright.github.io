@@ -1,12 +1,5 @@
 # mlbright.github.io
 
-[Public site][public] for mlbright
+Martin-Louis Bright's [public site][public] website.
 
-## Other sites
-
-Please visit my [GitHub README][readme] landing page, my [CV site][cv], or my [LinkedIn.com profile][linkedin].
-
-[linkedin]: https://www.linkedin.com/in/martinbright/
-[readme]: https://github.com/mlbright
-[cv]: https://mlbright.github.io/cv
 [public]: https://mlbright.github.io

@@ -1,8 +1,3 @@
-+++
-title = "mlbright's page"
-page_template = "til-page.html"
-+++
-
 # mlbright.github.io
 
 [Public site][public] for mlbright

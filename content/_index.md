@@ -1,6 +1,7 @@
 +++
 title = "mlbright's page"
-page_template = "til-page.html"
+template = "base.html"
+page_template = "index.html"
 +++
 
 # mlbright.github.io

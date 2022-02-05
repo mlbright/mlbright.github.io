@@ -1,6 +1,6 @@
 # mlbright.github.io
 
-Public site for mlbright
+[Public site][public] for mlbright
 
 ## Other sites
 
@@ -9,3 +9,4 @@ Please visit my [GitHub README][readme] landing page, my [CV site][cv], or my [L
 [linkedin]: https://www.linkedin.com/in/martinbright/
 [readme]: https://github.com/mlbright
 [cv]: https://mlbright.github.io/cv
+[public]: https://mlbright.github.io

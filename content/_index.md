@@ -1,3 +1,3 @@
 +++
-title = "Martin Bright's page"
+paginate_by = 5
 +++

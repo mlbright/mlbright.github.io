@@ -14,5 +14,5 @@ On MacOS,
   ![Document with password](/doc-with-password.png "document with password")
 1. From the Preview menu, Select File > Print.
 1. Select the PDF dropdown, and save the document.
-1. The resulting document will not have a password.
+1. The resulting new document will not have a password.
   ![Save without password](/print-pdf-without-password.png "document without password")

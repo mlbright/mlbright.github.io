@@ -10,7 +10,7 @@ build_search_index = true
 theme = "after-dark"
 
 taxonomies = [
-    {name = "tags", feed = true},
+  {name = "tags", feed = true},
 ]
 
 [markdown]
@@ -23,9 +23,9 @@ highlight_code = true
 after_dark_title = "Martin-Louis's blog"
 
 after_dark_menu = [
-    {url = "$BASE_URL", name = "Home"},
-    {url = "$BASE_URL/tags", name = "Tags"},
-    {url = "$BASE_URL/about", name = "About"},
+  {url = "$BASE_URL", name = "Home"},
+  {url = "$BASE_URL/tags", name = "Tags"},
+  {url = "$BASE_URL/about", name = "About"},
 ]
 
 author = "Martin-Louis Bright"

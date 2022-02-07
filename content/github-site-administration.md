@@ -1,6 +1,8 @@
 +++
 title = "GitHub Enterprise site administration"
 date = 2022-02-05
+[taxonomies] 
+tags=["GitHub", "TIL"]
 +++
 
 For several years, my main responsibility at work was [GitHub Enterprise][enterprise] system administration.

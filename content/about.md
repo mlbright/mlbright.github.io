@@ -13,4 +13,4 @@ You may also be interested in my:
 
 [cv]: https://mlbright.github.io/cv/
 [linkedin]: https://www.linkedin.com/in/martinbright/
-[github]: https://github.com/mlbright++
+[github]: https://github.com/mlbright

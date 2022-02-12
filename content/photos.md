@@ -25,7 +25,7 @@ It was fun to write, but maybe not the most time efficient endeavour.
 
 There's a neat thing called [Photoprism][photoprism].
 It's quite slow, but it will categorize your pictures in all kinds of dimensions.
-This may help you to decide which pictures to delete, while also letting your browse them in a meaningful way.
+This may help you to decide which pictures to delete, while also letting you browse them in a meaningful way.
 
 [photoprism]: https://github.com/photoprism/photoprism
 [thing]: https://github.com/mlbright/find-similar-images

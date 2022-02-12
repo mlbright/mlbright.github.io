@@ -12,7 +12,8 @@ It makes sense to try and understand them.
 It probably doesn't make sense to code your own mortgage calculator, but it can be [fun][canadian-mortgage].
 This is especially true because there are so many [free][mortgage-calculator-public] [calculators][mortgage-calculator-private] online.
 
-Canadian mortgages are tricky because the convention is to advertise as compounded semi-annually, however almost everyone pays them monthly, which means that the rate needs to be converted.
+Canadian mortgages are tricky because the convention is to advertise them as being compounded semi-annually.
+However almost everyone pays them monthly, which means that the rate needs to be converted.
 
 Instead of coding your own [mortgage calculator][canadian-mortgage] ([too][home-buyer] [complicated][land-transfer]) or using someone else's online calculator (not customized enough), you can use [Google Sheets][sheets].
 

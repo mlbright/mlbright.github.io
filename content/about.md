@@ -3,7 +3,7 @@ title = "About"
 date = 2022-02-06
 +++
 
-This site is mostly to document various tips, tricks, and things I've learned (TIL) that may save you time.
+This site has tips, tricks, and things I've learned (TIL) that may save you time.
 
 You may also be interested in my:
 

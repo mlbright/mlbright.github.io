@@ -5,12 +5,10 @@ date = 2023-01-03
 tags=["TIL"]
 +++
 
-## AWS SSM and SSH
-
 There’s a way to get most of the goodness of SSH in AWS **without opening ports, using public IP addresses, and modifying security groups or ACLs**.
 This is also a way of executing scripts directly against an instance, and of [SSH tunneling][tunneling] via AWS SSM.
 
-### SSM
+## SSM
 
 Starting an SSM session on the command line is straightforward:
 
@@ -20,7 +18,7 @@ aws ssm start-session --target i-0662da266763d5ea0
 
 However, you can use SSH the old fashioned way...
 
-### SSH over SSM
+## SSH over SSM
 
 Add this to your SSH config ($HOME/.ssh/config):
 
@@ -36,7 +34,7 @@ This allows the usual SSH invocation:
 ssh -i ~/.ssh/jump.pem ubuntu@i-0662da266763d5ea0
 ```
 
-This allows running a script on the remote AWS instance like:
+It also allows running a script on the remote AWS instance like:
 
 ```bash
 ssh -i ~/.ssh/jump.pem ubuntu@i-0662da266763d5ea0 'bash -s' < /tmp/something.sh
@@ -54,7 +52,7 @@ Or better:
 rsync -e 'ssh -i ~/.ssh/jump.pem' ubuntu@i-0662da266763d5ea0:folder/something.json /tmp/something.json
 ```
 
-### References
+## References
 
 - [Installing][plugin] the SSM plugin into the AWS CLI
 - [Getting started][getting-started] SSH over SSM

@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+	<title> - TIL</title>
+	<link href="https://mlbright.github.io/tags/til/atom.xml" rel="self" type="application/atom+xml"/>
+  <link href="https://mlbright.github.io"/>
+	<generator uri="https://www.getzola.org/">Zola</generator>
+	<updated>2023-01-06T00:00:00+00:00</updated>
+	<id>https://mlbright.github.io/tags/til/atom.xml</id>
+	<entry xml:lang="en">
+		<title>Start with draft pull requests</title>
+		<published>2023-01-06T00:00:00+00:00</published>
+		<updated>2023-01-06T00:00:00+00:00</updated>
+		<link rel="alternate" href="https://mlbright.github.io/github-actions-draft-pr/" type="text/html"/>
+		<id>https://mlbright.github.io/github-actions-draft-pr/</id>
+		<content type="html">&lt;p&gt;It would be nice if GitHub pull requests (PRs) could be created in draft mode by default.
+If this was the case, when the PR was ready for review and converted to &amp;quot;regular&amp;quot; mode, more elaborate tests and automations could be triggered off of the &lt;code&gt;ready_for_review&lt;&#x2F;code&gt; event.&lt;&#x2F;p&gt;
+&lt;p&gt;This flow would allow editing and rebasing of the pull request while it was in draft mode.
+Once out of draft mode and the &lt;code&gt;ready_for_review&lt;&#x2F;code&gt; tests have passed, the formal review involving a human can be requested with the knowledge that some degree of reworking, testing, and verification have been performed.
+This reduces &amp;quot;review churn&amp;quot;, saves computing resources, and saves everyone time.&lt;&#x2F;p&gt;
+&lt;p&gt;In the absense of such functionality natively, here is a GitHub Actions workflow that converts any new pull request into a draft automatically.
+Re-opened pull requests are not converted, neither is it converted when there are new Git commits pushed to it (&amp;quot;synchronize&amp;quot; events).&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;yaml&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-yaml &quot;&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;Draft pull requests
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff8942;&quot;&gt;on&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;pull_request&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;types&lt;&#x2F;span&gt;&lt;span&gt;: [&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;opened&lt;&#x2F;span&gt;&lt;span&gt;]
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;jobs&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;convert&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;Convert to draft
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;if&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;github.event.pull_request.draft == false
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;runs-on&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;ubuntu-latest
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;steps&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;Repository checkout
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;uses&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;actions&#x2F;checkout@v3
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;Convert to draft
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;env&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;           &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;GITHUB_TOKEN&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;${{ secrets.GITHUB_TOKEN }}
+&lt;&#x2F;span&gt;&lt;span&gt;           &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;PR_NUMBER&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;${{ github.event.number }}
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;run&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;|
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;          gh pr ready &amp;quot;$PR_NUMBER&amp;quot; --undo
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;references&quot;&gt;References&lt;&#x2F;h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;docs.github.com&#x2F;en&#x2F;actions&#x2F;learn-github-actions&#x2F;contexts#github-context&quot;&gt;GitHub contexts&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;docs.github.com&#x2F;en&#x2F;actions&#x2F;using-workflows&#x2F;events-that-trigger-workflows#pull_request&quot;&gt;GitHub events&lt;&#x2F;a&gt; &lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;docs.github.com&#x2F;en&#x2F;actions&#x2F;using-workflows&#x2F;using-github-cli-in-workflows&quot;&gt;Using the GitHub CLI in workflows&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>On AWS, no need for SSH</title>
+		<published>2023-01-03T00:00:00+00:00</published>
+		<updated>2023-01-03T00:00:00+00:00</updated>
+		<link rel="alternate" href="https://mlbright.github.io/aws-ssm/" type="text/html"/>
+		<id>https://mlbright.github.io/aws-ssm/</id>
+		<content type="html">&lt;p&gt;There’s a way to get most of the goodness of SSH in AWS &lt;strong&gt;without opening ports, using public IP addresses, and modifying security groups or ACLs&lt;&#x2F;strong&gt;.
+This is also a way of executing scripts directly against an instance, and of &lt;a href=&quot;https:&#x2F;&#x2F;aws.amazon.com&#x2F;premiumsupport&#x2F;knowledge-center&#x2F;systems-manager-ssh-vpc-resources&#x2F;&quot;&gt;SSH tunneling&lt;&#x2F;a&gt; via AWS SSM.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;ssm&quot;&gt;SSM&lt;&#x2F;h2&gt;
+&lt;p&gt;Starting an SSM session on the command line is straightforward:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;aws&lt;&#x2F;span&gt;&lt;span&gt; ssm start-session&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt; --target&lt;&#x2F;span&gt;&lt;span&gt; i-0662da266763d5ea0
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;However, you can use SSH the old fashioned way...&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;ssh-over-ssm&quot;&gt;SSH over SSM&lt;&#x2F;h2&gt;
+&lt;p&gt;Add this to your SSH config ($HOME&#x2F;.ssh&#x2F;config):&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# SSH over Session Manager
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;host&lt;&#x2F;span&gt;&lt;span&gt; i-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt; mi-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;ProxyCommand&lt;&#x2F;span&gt;&lt;span&gt; sh&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt; -c &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;aws ssm start-session --target %h --document-name AWS-StartSSHSession --parameters &amp;#39;portNumber=%p&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This allows the usual SSH invocation:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;ssh&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt; -i &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;~&lt;&#x2F;span&gt;&lt;span&gt;&#x2F;.ssh&#x2F;jump.pem ubuntu@i-0662da266763d5ea0
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;It also allows running a script on the remote AWS instance like:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;ssh&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt; -i &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;~&lt;&#x2F;span&gt;&lt;span&gt;&#x2F;.ssh&#x2F;jump.pem ubuntu@i-0662da266763d5ea0 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;bash -s&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span&gt; &#x2F;tmp&#x2F;something.sh
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;You can copy files to&#x2F;from the machine:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;scp&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt; -i &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;~&lt;&#x2F;span&gt;&lt;span&gt;&#x2F;.ssh&#x2F;jump.pem ubuntu@i-0662da266763d5ea0:folder&#x2F;something.json &#x2F;tmp&#x2F;something.json
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Or better:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;rsync&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt; -e &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;ssh -i ~&#x2F;.ssh&#x2F;jump.pem&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt; ubuntu@i-0662da266763d5ea0:folder&#x2F;something.json &#x2F;tmp&#x2F;something.json
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;references&quot;&gt;References&lt;&#x2F;h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;docs.aws.amazon.com&#x2F;systems-manager&#x2F;latest&#x2F;userguide&#x2F;session-manager-working-with-install-plugin.html&quot;&gt;Installing&lt;&#x2F;a&gt; the SSM plugin into the AWS CLI&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;docs.aws.amazon.com&#x2F;systems-manager&#x2F;latest&#x2F;userguide&#x2F;session-manager-getting-started-enable-ssh-connections.html&quot;&gt;Getting started&lt;&#x2F;a&gt; SSH over SSM&lt;&#x2F;li&gt;
+&lt;li&gt;SSH &lt;a href=&quot;https:&#x2F;&#x2F;aws.amazon.com&#x2F;premiumsupport&#x2F;knowledge-center&#x2F;systems-manager-ssh-vpc-resources&#x2F;&quot;&gt;tunneling&lt;&#x2F;a&gt; via SSM&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>iCloud Photos Reset</title>
+		<published>2022-12-29T00:00:00+00:00</published>
+		<updated>2022-12-29T00:00:00+00:00</updated>
+		<link rel="alternate" href="https://mlbright.github.io/photos-backup/" type="text/html"/>
+		<id>https://mlbright.github.io/photos-backup/</id>
+		<content type="html">&lt;p&gt;My Apple &lt;a href=&quot;https:&#x2F;&#x2F;www.icloud.com&#x2F;&quot;&gt;iCloud.com&lt;&#x2F;a&gt; account&#x27;s 200GB storage limit was fast approaching when I realized that
+most of the 2TB storage from my Google One subscription was unused.&lt;&#x2F;p&gt;
+&lt;p&gt;I decided it was time to do a reset: I do not have time to sort through all the photos and videos to decide which ones to delete.
+I tried &lt;a href=&quot;&#x2F;photos&quot;&gt;a few different ways&lt;&#x2F;a&gt; to find and remove duplicate content and wasn&#x27;t very successful in reducing the total storage used.
+It was time to bite the bullet and copy all the photos and videos to &lt;a href=&quot;https:&#x2F;&#x2F;photos.google.com&quot;&gt;Google Photos&lt;&#x2F;a&gt;.
+Then I would delete the files from iCloud.
+In this way I would preserve all the files and not worry about disk space in the Apple ecosystem for a little while. 
+(It has taken me 15 years to reach the 200GB iCloud limit.)&lt;&#x2F;p&gt;
+&lt;p&gt;Here is what I did:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Copied the files to a local volume.&lt;&#x2F;li&gt;
+&lt;li&gt;Made a backup copy to AWS S3.&lt;&#x2F;li&gt;
+&lt;li&gt;Uploaded the files to Google Photos.&lt;&#x2F;li&gt;
+&lt;li&gt;Deleted the files from iCloud.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;If and when I run into the 200GB iCloud limit again, I will lean on the above process to once again preserve my photos and free up space.
+By the time this occurs, there will no doubt be a better way.
+If you know of a better method &lt;strong&gt;today&lt;&#x2F;strong&gt;, please let me know via email.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;copying-the-files-to-a-local-ebs-volume&quot;&gt;Copying the files to a local EBS volume&lt;&#x2F;h2&gt;
+&lt;p&gt;I wanted to do all this in the cloud to avoid excessive bandwidth use in my home network.
+This may not have been an actual problem but I had an existing &lt;a href=&quot;https:&#x2F;&#x2F;aws.amazon.com&#x2F;&quot;&gt;AWS&lt;&#x2F;a&gt; t2.micro machine running for another purpose, so I decided to use that system to do everything.
+Downloading the files into AWS does not cost anything, but there are egress charges to send the data to Google.&lt;&#x2F;p&gt;
+&lt;p&gt;Via the AWS web console, I created and mounted a local EBS volume onto the Ubuntu 22.04 t2.micro machine mentioned previously.
+I attached the volume and it showed up as &lt;code&gt;&#x2F;dev&#x2F;xvdf&lt;&#x2F;code&gt;.
+Then I mounted it as &lt;code&gt;&#x2F;data&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;sudo&lt;&#x2F;span&gt;&lt;span&gt; mount &#x2F;dev&#x2F;xvdf &#x2F;data
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;sudo&lt;&#x2F;span&gt;&lt;span&gt; chown ubuntu:ubuntu &#x2F;data
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Copying the files from iCloud was very easy thanks to the wonderful &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;icloud-photos-downloader&#x2F;icloud_photos_downloader&quot;&gt;icloudpd&lt;&#x2F;a&gt; script and its very sensible default settings.
+It was just a matter of finding the right invocation to download all the files.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;data_folder&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;&#x2F;data&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;mkdir&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt; -p &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;$&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;data_folder&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;icloudpd&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt; --directory &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;$&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;data_folder&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot; &lt;&#x2F;span&gt;&lt;span&gt;\
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;  --username &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;$&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;cat&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt; mac-user)&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot; &lt;&#x2F;span&gt;&lt;span&gt;\
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;  --password &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;$&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;cat&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt; mac-password)&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot; &lt;&#x2F;span&gt;&lt;span&gt;\
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;  --no-progress-bar
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This was a single threaded process.
+I let it run the entire night and found it had completed sucessfully the following morning.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;backing-up-to-s3&quot;&gt;Backing up to S3&lt;&#x2F;h2&gt;
+&lt;p&gt;While not necessary or cheaper to make another copy of the files, I thought it was a good idea to avoid putting all my eggs in one cloud basket.&lt;&#x2F;p&gt;
+&lt;p&gt;I copied all the files to S3.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;path&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;&#x2F;data&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;s3Dir&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;s3:&#x2F;&#x2F;mlbright-photos-0&#x2F;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;for&lt;&#x2F;span&gt;&lt;span&gt; entry &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;in &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;$&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;path&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*; do
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;$&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;echo &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;$&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;entry&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;| &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;sed &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;s&#x2F;.*\&#x2F;&#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;)&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;  
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;[[ &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;-d &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;$&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;entry&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;]]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;; then
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;aws&lt;&#x2F;span&gt;&lt;span&gt; s3 cp&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;  --recursive &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;$&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;entry&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot; &amp;quot;$&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;s3Dir&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;$&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;else
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;aws&lt;&#x2F;span&gt;&lt;span&gt; s3 cp &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;$&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;entry&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot; &amp;quot;$&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;s3Dir&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;fi
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;done
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;uploading-to-google-photos&quot;&gt;Uploading to Google Photos&lt;&#x2F;h2&gt;
+&lt;p&gt;Uploading the files to Google was easy thanks to the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;gphotosuploader&#x2F;gphotos-uploader-cli&quot;&gt;Google Photos Uploader CLI&lt;&#x2F;a&gt;.
+I had over 40000 files and the daily Google Photos quota is 10000 file upload operations.
+The CLI continued attempting to upload even after the quota was exceeded and the API was returning HTTP 429 responses.
+So I fixed this and submitted a couple of pull requests to the project (&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;gphotosuploader&#x2F;gphotos-uploader-cli&#x2F;pull&#x2F;341&quot;&gt;CLI&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;gphotosuploader&#x2F;google-photos-api-client-go&#x2F;pull&#x2F;75&quot;&gt;lib&lt;&#x2F;a&gt;) and they were accepted!&lt;&#x2F;p&gt;
+&lt;p&gt;I ran a daily cron job for 5 days to run out my daily 10000 file upload limit.
+The cron job was:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;cd&lt;&#x2F;span&gt;&lt;span&gt; &#x2F;home&#x2F;ubuntu &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;|| &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;exit
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;export &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;GPHOTOS_CLI_TOKENSTORE_KEY&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;&amp;lt;redacted&amp;gt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;&#x2F;home&#x2F;ubuntu&#x2F;.go&#x2F;bin&#x2F;gphotos-uploader-cli&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt; --debug&lt;&#x2F;span&gt;&lt;span&gt; push &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;| &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;tee&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt; -a&lt;&#x2F;span&gt;&lt;span&gt; gphotos-uploader-cli-modified.log
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;(Above, the &lt;code&gt;gphotos-uploader-cli&lt;&#x2F;code&gt; binary was compiled on the t2.micro machine where the GOPATH aws &lt;code&gt;&#x2F;home&#x2F;ubuntu&#x2F;.go&lt;&#x2F;code&gt;.)&lt;&#x2F;p&gt;
+&lt;p&gt;The first time you run &lt;code&gt;gphotos-uploader-cli&lt;&#x2F;code&gt;, it walks you through the OAuth2 dance with Google and saves a token.
+I believe it is valid for 7 days.
+Subsequent runs via cron job succeeded without prompting the user.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;deleting-the-files-off-of-icloud-com&quot;&gt;Deleting the files off of iCloud.com&lt;&#x2F;h2&gt;
+&lt;p&gt;This was a scary moment.
+Before deleting 200GB of family memories, I did quite a few spot checks on Google Photos by looking at old pictures and videos: fun times!&lt;&#x2F;p&gt;
+&lt;p&gt;Then it was time to use the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;picklepete&#x2F;pyicloud&quot;&gt;pyicloud API&lt;&#x2F;a&gt; directly to delete all the files off iCloud.
+Via the browser, we are limited to deleting 1000 files at a time.
+Switching to Python instead of Bash, we can do:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;from &lt;&#x2F;span&gt;&lt;span&gt;pyicloud &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span&gt;PyiCloudService
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;api &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;PyiCloudService&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;youriclouduser@mac.com&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;p &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;in &lt;&#x2F;span&gt;&lt;span&gt;api.photos.all:
+&lt;&#x2F;span&gt;&lt;span&gt;    p.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;delete&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;&#x2F;h2&gt;
+&lt;p&gt;Using a Linux system in the cloud and a few open source tools, I was able to make better use of the cloud storage I was already paying for and make a backup copy of all my pictures.&lt;&#x2F;p&gt;
+&lt;p&gt;The costs for all this in AWS were not obvious to itemize because I was using the same machine for other purposes.
+However, it&#x27;s fair to say that the S3 standard storage tier was more expensive than I thought it would be (about $10&#x2F;month), so I will delete it or use a different storage tier since I have the Google Photos copy.
+Network egress was cheaper than I thought it would be, at a few extra dollars on the monthly AWS bill.&lt;&#x2F;p&gt;
+&lt;p&gt;By far, the most expensive item was the EBS volume, which I deleted once I was confident the upload to Google Photos was successful.&lt;&#x2F;p&gt;
+&lt;p&gt;I wonder if there&#x27;s a better way to do all this.
+&lt;a href=&quot;https:&#x2F;&#x2F;upspin.io&#x2F;&quot;&gt;Upspin&lt;&#x2F;a&gt;?.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Mortgages</title>
+		<published>2022-02-11T00:00:00+00:00</published>
+		<updated>2022-02-11T00:00:00+00:00</updated>
+		<link rel="alternate" href="https://mlbright.github.io/mortgages/" type="text/html"/>
+		<id>https://mlbright.github.io/mortgages/</id>
+		<content type="html">&lt;p&gt;Mortgages are terrifying.
+For most Canadians, a mortgage on their primary home may be the biggest financial transaction in their lives.
+It makes sense to try and understand them.&lt;&#x2F;p&gt;
+&lt;p&gt;It probably doesn&#x27;t make sense to code your own mortgage calculator, but it can be &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;mlbright&#x2F;canadian-mortgage&quot;&gt;fun&lt;&#x2F;a&gt;.
+This is especially true because there are so many &lt;a href=&quot;https:&#x2F;&#x2F;itools-ioutils.fcac-acfc.gc.ca&#x2F;MC-CH&#x2F;MCCalc-CHCalc-eng.aspx&quot;&gt;free&lt;&#x2F;a&gt; &lt;a href=&quot;https:&#x2F;&#x2F;www.ratehub.ca&#x2F;mortgage-payment-calculator&quot;&gt;calculators&lt;&#x2F;a&gt; online.&lt;&#x2F;p&gt;
+&lt;p&gt;Canadian mortgages are tricky because the convention is to advertise them as being compounded semi-annually.
+However almost everyone pays them monthly, which means that the rate needs to be converted.&lt;&#x2F;p&gt;
+&lt;p&gt;Instead of coding your own &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;mlbright&#x2F;canadian-mortgage&quot;&gt;mortgage calculator&lt;&#x2F;a&gt; (&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;mlbright&#x2F;home-buyer&quot;&gt;too&lt;&#x2F;a&gt; &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;mlbright&#x2F;toronto-land-transfer-tax&quot;&gt;complicated&lt;&#x2F;a&gt;) or using someone else&#x27;s online calculator (not customized enough), you can use &lt;a href=&quot;https:&#x2F;&#x2F;docs.google.com&#x2F;spreadsheets&quot;&gt;Google Sheets&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;The interest rate must be &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Compound_interest#Compounding_basis&quot;&gt;converted&lt;&#x2F;a&gt; from one compounding basis (twice a year (2)) to another (every month (12)):&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#191919;color:#f8f8f2;&quot;&gt;&lt;code&gt;&lt;span&gt;advertised rate (compounded semi-annually) = AR = 5.0%
+&lt;&#x2F;span&gt;&lt;span&gt;advertised rate &#x2F; 100 = R = 0.05
+&lt;&#x2F;span&gt;&lt;span&gt;rate compounded monthly = r = (((1+(R&#x2F;2))^(2&#x2F;12))-1)*12 = 0.049486986
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;You can use the &lt;a href=&quot;https:&#x2F;&#x2F;support.google.com&#x2F;docs&#x2F;answer&#x2F;3093185?hl=en&quot;&gt;PMT function&lt;&#x2F;a&gt; to compute the mortgage, after converting the advertised mortage rate.&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#191919;color:#f8f8f2;&quot;&gt;&lt;code&gt;&lt;span&gt;adjusted rate (from above) = 0.049486986 
+&lt;&#x2F;span&gt;&lt;span&gt;number of payments = 25 years * 12 months = 300
+&lt;&#x2F;span&gt;&lt;span&gt;principal = 1000000
+&lt;&#x2F;span&gt;&lt;span&gt;monthly mortage payment = PMT(adjusted rate&#x2F;12,number of payments,principal) = $5,816.05
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;docs.google.com&#x2F;spreadsheets&quot;&gt;Google Sheets&lt;&#x2F;a&gt; allows you to customize formulas while avoiding the error prone aspects of complex financial calculations. 
+Most importantly, effortlessly collaborate and share the results with interested parties.&lt;&#x2F;p&gt;
+&lt;p&gt;If you don&#x27;t mind sharing your financial data with a mega corporation, it&#x27;s very handy.
+(Yay! It&#x27;s 2022 and I have discovered Google Spreadsheets!)
+Remember to double-check your results with reputable online calculators.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Photos</title>
+		<published>2022-02-11T00:00:00+00:00</published>
+		<updated>2022-02-11T00:00:00+00:00</updated>
+		<link rel="alternate" href="https://mlbright.github.io/photos/" type="text/html"/>
+		<id>https://mlbright.github.io/photos/</id>
+		<content type="html">&lt;p&gt;If you have gigabytes of digital photos and movies, they can fill up your MacBook Air SSD very quickly.
+Sorting through them can be a challenge, and frankly I don&#x27;t have a good way of doing this.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;find-duplicates&quot;&gt;Find duplicates&lt;&#x2F;h3&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;find &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;$&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;some_directory&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt; -type&lt;&#x2F;span&gt;&lt;span&gt; f&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt; -exec&lt;&#x2F;span&gt;&lt;span&gt; md5sum {} &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;\; &lt;&#x2F;span&gt;&lt;span&gt;\
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;| &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;sort &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;| &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;awk &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;visited[$1]++&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39; &lt;&#x2F;span&gt;&lt;span&gt;\
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;| &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;awk &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;{$1=&amp;quot;&amp;quot;; print}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;| &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;tee&lt;&#x2F;span&gt;&lt;span&gt; duplicates-to-delete.txt
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h3 id=&quot;find-similar-images&quot;&gt;Find similar images&lt;&#x2F;h3&gt;
+&lt;p&gt;I wrote a &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;mlbright&#x2F;find-similar-images&quot;&gt;program to find similar images&lt;&#x2F;a&gt;, and it found a few gigabytes of data to eliminate, but it was horribly slow while only comparing files of the same size.
+It was fun to write, but maybe not the most time efficient endeavour.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;use-ai&quot;&gt;Use AI&lt;&#x2F;h3&gt;
+&lt;p&gt;There&#x27;s a neat thing called &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;photoprism&#x2F;photoprism&quot;&gt;Photoprism&lt;&#x2F;a&gt;.
+It&#x27;s quite slow, but it will categorize your pictures in all kinds of dimensions.
+This may help you to decide which pictures to delete, while also letting you browse them in a meaningful way.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Removing a password from a PDF</title>
+		<published>2022-02-06T00:00:00+00:00</published>
+		<updated>2022-02-06T00:00:00+00:00</updated>
+		<link rel="alternate" href="https://mlbright.github.io/pdf-remove-password/" type="text/html"/>
+		<id>https://mlbright.github.io/pdf-remove-password/</id>
+		<content type="html">&lt;p&gt;If a PDF document has a password, it can be handy to remove that password permanently.&lt;&#x2F;p&gt;
+&lt;p&gt;On MacOS,&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Open the document in the Preview app.&lt;&#x2F;li&gt;
+&lt;li&gt;Enter the password.
+&lt;img src=&quot;&#x2F;doc-with-password.png&quot; alt=&quot;Document with password&quot; title=&quot;document with password&quot; &#x2F;&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;From the Preview menu, Select File &amp;gt; Print.&lt;&#x2F;li&gt;
+&lt;li&gt;Select the PDF dropdown, and save the document.&lt;&#x2F;li&gt;
+&lt;li&gt;The resulting new document will not have a password.
+&lt;img src=&quot;&#x2F;print-pdf-without-password.png&quot; alt=&quot;Save without password&quot; title=&quot;document without password&quot; &#x2F;&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>GitHub Enterprise site administration</title>
+		<published>2022-02-05T00:00:00+00:00</published>
+		<updated>2022-02-05T00:00:00+00:00</updated>
+		<link rel="alternate" href="https://mlbright.github.io/github-site-administration/" type="text/html"/>
+		<id>https://mlbright.github.io/github-site-administration/</id>
+		<content type="html">&lt;p&gt;For several years, my main responsibility at work was &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;enterprise&quot;&gt;GitHub Enterprise&lt;&#x2F;a&gt; system administration.
+Here is a collection of thoughts about the experience, in no particular order.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;rate-limiting&quot;&gt;Rate Limiting&lt;&#x2F;h3&gt;
+&lt;p&gt;GitHub Enterprise comes with &lt;a href=&quot;https:&#x2F;&#x2F;docs.github.com&#x2F;en&#x2F;enterprise-server@3.3&#x2F;admin&#x2F;configuration&#x2F;configuring-your-enterprise&#x2F;configuring-rate-limits&quot;&gt;built-in rate limiting&lt;&#x2F;a&gt;.
+Unfortunately, it isn&#x27;t enabled by default, which is a shame.
+If you&#x27;re running an instance with many users and large repositories (ours which had thousands of user accounts and hundreds of daily users, often with heavy workloads) you will likely run into performance issues. 
+GitHub Enterprise is a single VM instance.
+A single point of failure, and thus one can only scale it vertically.
+The default rate limits are reasonable for most workloads, but it&#x27;s better to start somewhere and adjust them than allow abusive behavior to take root.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;hardware&quot;&gt;Hardware&lt;&#x2F;h3&gt;
+&lt;p&gt;Use dedicated, powerful hardware with lots of RAM and I&#x2F;O.
+CPUs won&#x27;t hurt either because Git is computing lots of hashes.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;github-apps&quot;&gt;GitHub Apps&lt;&#x2F;h3&gt;
+&lt;p&gt;Prefer and promote the use of &lt;a href=&quot;https:&#x2F;&#x2F;docs.github.com&#x2F;en&#x2F;developers&#x2F;apps&#x2F;getting-started-with-apps&#x2F;about-apps&quot;&gt;GitHub Apps&lt;&#x2F;a&gt; instead of legacy OAuth apps or personal access tokens.
+It&#x27;s a more secure and better scheme for integrating with the server.
+It also avoids the &amp;quot;service account&amp;quot; pattern, for which a shared user account is created to perform a role.
+GitHub Apps are first class actors in GitHub, but do not consume an Enterprise license.&lt;&#x2F;p&gt;
+&lt;p&gt;When I was an admin, there wasn&#x27;t a way to install a GitHub App on all organizations.
+However, this can be very useful and &lt;a href=&quot;https:&#x2F;&#x2F;gist.github.com&#x2F;stoe&#x2F;2eae33bd3d097a59b4a75e997a14c54d&quot;&gt;someone wrote a script to do it&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;github-com&quot;&gt;GitHub.com&lt;&#x2F;h3&gt;
+&lt;p&gt;Ask yourself if your organization really needs GitHub Enterprise as opposed to &lt;a href=&quot;https:&#x2F;&#x2F;github.com&quot;&gt;GitHub.com&lt;&#x2F;a&gt;.
+Do you really need the headache of administering your own instance?
+Be aware that new features are always rolled out to GitHub.com first, and often do not appear in Enterprise until 6 or more months later.&lt;&#x2F;p&gt;
+&lt;p&gt;Also, if you have large repositories, potentially with Git LFS files, it may be advantageous to have the dedicated computing resources of an Enterprise appliance.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;hubble&quot;&gt;Hubble&lt;&#x2F;h3&gt;
+&lt;p&gt;If you run GitHub Enterprise, you will need to have a sense of its usage that goes beyond what is provided by GitHub.
+There&#x27;s a third party tool for that: &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Autodesk&#x2F;hubble&quot;&gt;Hubble&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;delegate-to-organization-owners&quot;&gt;Delegate to organization owners&lt;&#x2F;h3&gt;
+&lt;p&gt;Make it clear that organization owners are responsible for managing the users, teams, and repositories in their organizations.
+There is no way site administrators can handle this better than the leaders who are managing the developer teams.
+Create an &lt;em&gt;owners manual&lt;&#x2F;em&gt; that:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Provides context and elaborates on the &lt;a href=&quot;https:&#x2F;&#x2F;docs.github.com&#x2F;en&#x2F;enterprise-server@3.3&quot;&gt;official documentation&lt;&#x2F;a&gt; for:
+&lt;ul&gt;
+&lt;li&gt;Teams and users&lt;&#x2F;li&gt;
+&lt;li&gt;Repository permissions&lt;&#x2F;li&gt;
+&lt;li&gt;User responsibilities with regard to security&lt;&#x2F;li&gt;
+&lt;li&gt;GitHub Apps&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;Outlines the responsibilities of GitHub Owners&lt;&#x2F;li&gt;
+&lt;li&gt;Provides examples of correct usage, and usage anti-patterns&lt;&#x2F;li&gt;
+&lt;li&gt;Answers frequent questions&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Post the source of this manual in a Site Administration organization, so that it can be contributed to by everyone.
+This keeps users and org owners engaged and gives them the sense of ownership they need to operate effectively.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;site-administration-organization&quot;&gt;Site administration organization&lt;&#x2F;h3&gt;
+&lt;p&gt;Create a site administration organization within the instance.
+Publish the source for all code and instance specific documentation there.
+This will provide transparency to management and users and give them a sense of the effort that goes into administering the instance.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;git-lfs-and-repository-hygiene&quot;&gt;Git LFS and repository hygiene&lt;&#x2F;h3&gt;
+&lt;p&gt;Avoid using Git LFS if possible, and make it clear to users that it is a last resort.
+As rule of thumb, if a file isn&#x27;t diff-able, then it shouldn&#x27;t belong in Git.
+Set the &lt;a href=&quot;https:&#x2F;&#x2F;docs.github.com&#x2F;en&#x2F;enterprise-server@3.1&#x2F;admin&#x2F;policies&#x2F;enforcing-policies-for-your-enterprise&#x2F;enforcing-repository-management-policies-in-your-enterprise#enforcing-a-policy-for-git-push-limits&quot;&gt;global large file threshold&lt;&#x2F;a&gt; to something like 5Mb, only making exceptions on repo by repo basis.
+This will save you a lot of computing resources and user aggravation.
+The users will find better places to put large binaries, their repositories will clone faster, resulting in better builds and streamlined processes.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;log-forwarding&quot;&gt;Log forwarding&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;docs.github.com&#x2F;en&#x2F;enterprise-server@3.3&#x2F;admin&#x2F;user-management&#x2F;monitoring-activity-in-your-enterprise&#x2F;log-forwarding&quot;&gt;Do it&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;announcements-and-user-facing-docs&quot;&gt;Announcements and user facing docs&lt;&#x2F;h3&gt;
+&lt;p&gt;Create a user facing documentation web site whose source is not hosted in GitHub Enterprise.
+(Instead consider GitHub.com?)
+The purpose of this web site is to keep users abreast of developments on the server.
+It should be available in case of outages to the Enterprise instance.&lt;&#x2F;p&gt;
+&lt;p&gt;Inform users about:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Maintenance&lt;&#x2F;li&gt;
+&lt;li&gt;Outages&lt;&#x2F;li&gt;
+&lt;li&gt;Pointers to other documentation&lt;&#x2F;li&gt;
+&lt;li&gt;Frequent user questions&lt;&#x2F;li&gt;
+&lt;li&gt;New developments&lt;&#x2F;li&gt;
+&lt;li&gt;Upcoming versions and features&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;smoke-tests&quot;&gt;Smoke tests&lt;&#x2F;h3&gt;
+&lt;p&gt;Monitoring the server should be a no brainer using standard tools.
+However, beyond that, it&#x27;s good to run relatively frequent smoke tests.&lt;&#x2F;p&gt;
+&lt;p&gt;These might include:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Clones of medium sized repositories&lt;&#x2F;li&gt;
+&lt;li&gt;Logging in and creating an issue&lt;&#x2F;li&gt;
+&lt;li&gt;Forking a repository&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;These exercise what a user would experience, and are often far more indicative of server health than traditional metrics.&lt;&#x2F;p&gt;
+&lt;p&gt;Run these from different geos: this will often show that problems are localized, not an issue with the GitHub Enterprise server.&lt;&#x2F;p&gt;
+&lt;p&gt;Record and visualize the results.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;slack-channel&quot;&gt;Slack Channel&lt;&#x2F;h3&gt;
+&lt;p&gt;Create a Slack channel dedicated to Git and GitHub.
+Answer it frequently and collect common questions into the user facing documentation site.&lt;&#x2F;p&gt;
+&lt;p&gt;Consider separating the Git and GitHub concerns into 2 channels, but understand that this may also confuse users when issues straddle both things.&lt;&#x2F;p&gt;
+&lt;p&gt;Have an explicit and documented support policy on the user facing documentation site.
+This should set expectations about support on the Slack channel.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;default-to-open&quot;&gt;Default to &amp;quot;Open&amp;quot;&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Favor public repositories to facilitate collaboration and &lt;em&gt;discovery&lt;&#x2F;em&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;Members of an organization or team should be &lt;em&gt;visible&lt;&#x2F;em&gt;, unless there is reason not to.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;disable-github-pages&quot;&gt;Disable GitHub Pages&lt;&#x2F;h3&gt;
+&lt;p&gt;Completely turn off &lt;a href=&quot;https:&#x2F;&#x2F;docs.github.com&#x2F;en&#x2F;enterprise-server@3.3&#x2F;pages&#x2F;getting-started-with-github-pages&#x2F;about-github-pages&quot;&gt;GitHub Pages&lt;&#x2F;a&gt;.
+The most frequent and severe security issues for GitHub Enterprise were related to GitHub Pages.
+I&#x27;m betting the next high severity issue will also be.
+Best to simply turn the feature off.&lt;&#x2F;p&gt;
+&lt;p&gt;Users will find other destinations to publish the source of their web sites, documentation, or whatever.
+This cleanly separates the concerns of collaborating around &lt;em&gt;development&lt;&#x2F;em&gt;, which lie with GitHub, from the concerns of &lt;em&gt;publication or hosting&lt;&#x2F;em&gt;.
+Built artifacts, binaries, images and other items that do not really belong in Git will thus not be polluting the repositories.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;That&#x27;s it for now!&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+</content>
+	</entry>
+</feed>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+      <title></title>
+
+      
+
+      
+          <link rel="stylesheet" href="https://mlbright.github.io/site.css">
+      
+
+      
+      
+    </head>
+
+    <body class="hack dark main container">
+        
+    
+        
+                
+                    <header>
+                        <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;mlbright.github.io">
+                                <span itemprop="name">Home</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;mlbright.github.io&#x2F;tags">
+                                <span itemprop="name">Tags</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;mlbright.github.io&#x2F;about">
+                                <span itemprop="name">About</span></a>
+                        
+                        </nav>
+                    </header>
+                
+            
+    
+
+<article itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+        <h1 itemprop="headline">Start with draft pull requests</h1>
+        <span class="muted">
+    <svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <circle cx="16" cy="16" r="14"/>
+        <path d="M16 8 L16 16 20 20"/>
+    </svg>
+    <span>2 minute read</span>
+    <svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/>
+    </svg>
+
+    Published: 2023-01-06
+</span>
+    </header>
+    <div itemprop="articleBody">
+      <p>It would be nice if GitHub pull requests (PRs) could be created in draft mode by default.
+If this was the case, when the PR was ready for review and converted to &quot;regular&quot; mode, more elaborate tests and automations could be triggered off of the <code>ready_for_review</code> event.</p>
+<p>This flow would allow editing and rebasing of the pull request while it was in draft mode.
+Once out of draft mode and the <code>ready_for_review</code> tests have passed, the formal review involving a human can be requested with the knowledge that some degree of reworking, testing, and verification have been performed.
+This reduces &quot;review churn&quot;, saves computing resources, and saves everyone time.</p>
+<p>In the absense of such functionality natively, here is a GitHub Actions workflow that converts any new pull request into a draft automatically.
+Re-opened pull requests are not converted, neither is it converted when there are new Git commits pushed to it (&quot;synchronize&quot; events).</p>
+<pre data-lang="yaml" style="background-color:#191919;color:#f8f8f2;" class="language-yaml "><code class="language-yaml" data-lang="yaml"><span style="color:#ff5e5e;">name</span><span>: </span><span style="color:#fbe3bf;">Draft pull requests
+</span><span>
+</span><span style="color:#ff8942;">on</span><span>:
+</span><span>  </span><span style="color:#ff5e5e;">pull_request</span><span>:
+</span><span>    </span><span style="color:#ff5e5e;">types</span><span>: [</span><span style="color:#fbe3bf;">opened</span><span>]
+</span><span>
+</span><span style="color:#ff5e5e;">jobs</span><span>:
+</span><span>  </span><span style="color:#ff5e5e;">convert</span><span>:
+</span><span>    </span><span style="color:#ff5e5e;">name</span><span>: </span><span style="color:#fbe3bf;">Convert to draft
+</span><span>    </span><span style="color:#ff5e5e;">if</span><span>: </span><span style="color:#fbe3bf;">github.event.pull_request.draft == false
+</span><span>    </span><span style="color:#ff5e5e;">runs-on</span><span>: </span><span style="color:#fbe3bf;">ubuntu-latest
+</span><span>    </span><span style="color:#ff5e5e;">steps</span><span>:
+</span><span>      - </span><span style="color:#ff5e5e;">name</span><span>: </span><span style="color:#fbe3bf;">Repository checkout
+</span><span>        </span><span style="color:#ff5e5e;">uses</span><span>: </span><span style="color:#fbe3bf;">actions/checkout@v3
+</span><span>      - </span><span style="color:#ff5e5e;">name</span><span>: </span><span style="color:#fbe3bf;">Convert to draft
+</span><span>        </span><span style="color:#ff5e5e;">env</span><span>:
+</span><span>           </span><span style="color:#ff5e5e;">GITHUB_TOKEN</span><span>: </span><span style="color:#fbe3bf;">${{ secrets.GITHUB_TOKEN }}
+</span><span>           </span><span style="color:#ff5e5e;">PR_NUMBER</span><span>: </span><span style="color:#fbe3bf;">${{ github.event.number }}
+</span><span>        </span><span style="color:#ff5e5e;">run</span><span>: </span><span style="color:#ff5e5e;">|
+</span><span style="color:#fbe3bf;">          gh pr ready &quot;$PR_NUMBER&quot; --undo
+</span></code></pre>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://docs.github.com/en/actions/learn-github-actions/contexts#github-context">GitHub contexts</a></li>
+<li><a href="https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request">GitHub events</a> </li>
+<li><a href="https://docs.github.com/en/actions/using-workflows/using-github-cli-in-workflows">Using the GitHub CLI in workflows</a></li>
+</ul>
+
+    </div>
+
+    
+        <footer>
+            <hr>
+            <p>
+                
+                    Published by Martin-Louis Bright
+                
+                
+                
+                    
+                    tagged
+                    
+                        <a href="https://mlbright.github.io/tags/til/">TIL</a>
+                        
+                    
+                
+            </p>
+            
+            
+        </footer>
+    
+</article>
+
+
+    </body>
+
+</html>

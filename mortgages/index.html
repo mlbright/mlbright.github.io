@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+      <title></title>
+
+      
+
+      
+          <link rel="stylesheet" href="https://mlbright.github.io/site.css">
+      
+
+      
+      
+    </head>
+
+    <body class="hack dark main container">
+        
+    
+        
+                
+                    <header>
+                        <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;mlbright.github.io">
+                                <span itemprop="name">Home</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;mlbright.github.io&#x2F;tags">
+                                <span itemprop="name">Tags</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;mlbright.github.io&#x2F;about">
+                                <span itemprop="name">About</span></a>
+                        
+                        </nav>
+                    </header>
+                
+            
+    
+
+<article itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+        <h1 itemprop="headline">Mortgages</h1>
+        <span class="muted">
+    <svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <circle cx="16" cy="16" r="14"/>
+        <path d="M16 8 L16 16 20 20"/>
+    </svg>
+    <span>2 minute read</span>
+    <svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/>
+    </svg>
+
+    Published: 2022-02-11
+</span>
+    </header>
+    <div itemprop="articleBody">
+      <p>Mortgages are terrifying.
+For most Canadians, a mortgage on their primary home may be the biggest financial transaction in their lives.
+It makes sense to try and understand them.</p>
+<p>It probably doesn't make sense to code your own mortgage calculator, but it can be <a href="https://github.com/mlbright/canadian-mortgage">fun</a>.
+This is especially true because there are so many <a href="https://itools-ioutils.fcac-acfc.gc.ca/MC-CH/MCCalc-CHCalc-eng.aspx">free</a> <a href="https://www.ratehub.ca/mortgage-payment-calculator">calculators</a> online.</p>
+<p>Canadian mortgages are tricky because the convention is to advertise them as being compounded semi-annually.
+However almost everyone pays them monthly, which means that the rate needs to be converted.</p>
+<p>Instead of coding your own <a href="https://github.com/mlbright/canadian-mortgage">mortgage calculator</a> (<a href="https://github.com/mlbright/home-buyer">too</a> <a href="https://github.com/mlbright/toronto-land-transfer-tax">complicated</a>) or using someone else's online calculator (not customized enough), you can use <a href="https://docs.google.com/spreadsheets">Google Sheets</a>.</p>
+<p>The interest rate must be <a href="https://en.wikipedia.org/wiki/Compound_interest#Compounding_basis">converted</a> from one compounding basis (twice a year (2)) to another (every month (12)):</p>
+<pre style="background-color:#191919;color:#f8f8f2;"><code><span>advertised rate (compounded semi-annually) = AR = 5.0%
+</span><span>advertised rate / 100 = R = 0.05
+</span><span>rate compounded monthly = r = (((1+(R/2))^(2/12))-1)*12 = 0.049486986
+</span></code></pre>
+<p>You can use the <a href="https://support.google.com/docs/answer/3093185?hl=en">PMT function</a> to compute the mortgage, after converting the advertised mortage rate.</p>
+<pre style="background-color:#191919;color:#f8f8f2;"><code><span>adjusted rate (from above) = 0.049486986 
+</span><span>number of payments = 25 years * 12 months = 300
+</span><span>principal = 1000000
+</span><span>monthly mortage payment = PMT(adjusted rate/12,number of payments,principal) = $5,816.05
+</span></code></pre>
+<p><a href="https://docs.google.com/spreadsheets">Google Sheets</a> allows you to customize formulas while avoiding the error prone aspects of complex financial calculations. 
+Most importantly, effortlessly collaborate and share the results with interested parties.</p>
+<p>If you don't mind sharing your financial data with a mega corporation, it's very handy.
+(Yay! It's 2022 and I have discovered Google Spreadsheets!)
+Remember to double-check your results with reputable online calculators.</p>
+
+    </div>
+
+    
+        <footer>
+            <hr>
+            <p>
+                
+                    Published by Martin-Louis Bright
+                
+                
+                
+                    
+                    tagged
+                    
+                        <a href="https://mlbright.github.io/tags/til/">TIL</a>
+                        
+                    
+                
+            </p>
+            
+            
+        </footer>
+    
+</article>
+
+
+    </body>
+
+</html>

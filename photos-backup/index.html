@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+      <title></title>
+
+      
+
+      
+          <link rel="stylesheet" href="https://mlbright.github.io/site.css">
+      
+
+      
+      
+    </head>
+
+    <body class="hack dark main container">
+        
+    
+        
+                
+                    <header>
+                        <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;mlbright.github.io">
+                                <span itemprop="name">Home</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;mlbright.github.io&#x2F;tags">
+                                <span itemprop="name">Tags</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;mlbright.github.io&#x2F;about">
+                                <span itemprop="name">About</span></a>
+                        
+                        </nav>
+                    </header>
+                
+            
+    
+
+<article itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+        <h1 itemprop="headline">iCloud Photos Reset</h1>
+        <span class="muted">
+    <svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <circle cx="16" cy="16" r="14"/>
+        <path d="M16 8 L16 16 20 20"/>
+    </svg>
+    <span>6 minute read</span>
+    <svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/>
+    </svg>
+
+    Published: 2022-12-29
+</span>
+    </header>
+    <div itemprop="articleBody">
+      <p>My Apple <a href="https://www.icloud.com/">iCloud.com</a> account's 200GB storage limit was fast approaching when I realized that
+most of the 2TB storage from my Google One subscription was unused.</p>
+<p>I decided it was time to do a reset: I do not have time to sort through all the photos and videos to decide which ones to delete.
+I tried <a href="/photos">a few different ways</a> to find and remove duplicate content and wasn't very successful in reducing the total storage used.
+It was time to bite the bullet and copy all the photos and videos to <a href="https://photos.google.com">Google Photos</a>.
+Then I would delete the files from iCloud.
+In this way I would preserve all the files and not worry about disk space in the Apple ecosystem for a little while. 
+(It has taken me 15 years to reach the 200GB iCloud limit.)</p>
+<p>Here is what I did:</p>
+<ol>
+<li>Copied the files to a local volume.</li>
+<li>Made a backup copy to AWS S3.</li>
+<li>Uploaded the files to Google Photos.</li>
+<li>Deleted the files from iCloud.</li>
+</ol>
+<p>If and when I run into the 200GB iCloud limit again, I will lean on the above process to once again preserve my photos and free up space.
+By the time this occurs, there will no doubt be a better way.
+If you know of a better method <strong>today</strong>, please let me know via email.</p>
+<h2 id="copying-the-files-to-a-local-ebs-volume">Copying the files to a local EBS volume</h2>
+<p>I wanted to do all this in the cloud to avoid excessive bandwidth use in my home network.
+This may not have been an actual problem but I had an existing <a href="https://aws.amazon.com/">AWS</a> t2.micro machine running for another purpose, so I decided to use that system to do everything.
+Downloading the files into AWS does not cost anything, but there are egress charges to send the data to Google.</p>
+<p>Via the AWS web console, I created and mounted a local EBS volume onto the Ubuntu 22.04 t2.micro machine mentioned previously.
+I attached the volume and it showed up as <code>/dev/xvdf</code>.
+Then I mounted it as <code>/data</code>.</p>
+<pre data-lang="bash" style="background-color:#191919;color:#f8f8f2;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#e9fdac;">sudo</span><span> mount /dev/xvdf /data
+</span><span style="color:#e9fdac;">sudo</span><span> chown ubuntu:ubuntu /data
+</span></code></pre>
+<p>Copying the files from iCloud was very easy thanks to the wonderful <a href="https://github.com/icloud-photos-downloader/icloud_photos_downloader">icloudpd</a> script and its very sensible default settings.
+It was just a matter of finding the right invocation to download all the files.</p>
+<pre data-lang="bash" style="background-color:#191919;color:#f8f8f2;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#e9fdac;">data_folder</span><span style="color:#ff5e5e;">=</span><span style="color:#ffffff;">&quot;</span><span style="color:#fbe3bf;">/data</span><span style="color:#ffffff;">&quot;
+</span><span style="color:#e9fdac;">mkdir</span><span style="font-style:italic;color:#fc9354;"> -p </span><span style="color:#ffffff;">&quot;$</span><span style="color:#e9fdac;">data_folder</span><span style="color:#ffffff;">&quot;
+</span><span>
+</span><span style="color:#e9fdac;">icloudpd</span><span style="font-style:italic;color:#fc9354;"> --directory </span><span style="color:#ffffff;">&quot;$</span><span style="color:#e9fdac;">data_folder</span><span style="color:#ffffff;">&quot; </span><span>\
+</span><span style="font-style:italic;color:#fc9354;">  --username </span><span style="color:#ffffff;">&quot;$</span><span style="color:#fbe3bf;">(</span><span style="color:#e9fdac;">cat</span><span style="color:#fbe3bf;"> mac-user)</span><span style="color:#ffffff;">&quot; </span><span>\
+</span><span style="font-style:italic;color:#fc9354;">  --password </span><span style="color:#ffffff;">&quot;$</span><span style="color:#fbe3bf;">(</span><span style="color:#e9fdac;">cat</span><span style="color:#fbe3bf;"> mac-password)</span><span style="color:#ffffff;">&quot; </span><span>\
+</span><span style="font-style:italic;color:#fc9354;">  --no-progress-bar
+</span></code></pre>
+<p>This was a single threaded process.
+I let it run the entire night and found it had completed sucessfully the following morning.</p>
+<h2 id="backing-up-to-s3">Backing up to S3</h2>
+<p>While not necessary or cheaper to make another copy of the files, I thought it was a good idea to avoid putting all my eggs in one cloud basket.</p>
+<p>I copied all the files to S3.</p>
+<pre data-lang="bash" style="background-color:#191919;color:#f8f8f2;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#e9fdac;">path</span><span style="color:#ff5e5e;">=</span><span style="color:#ffffff;">&quot;</span><span style="color:#fbe3bf;">/data</span><span style="color:#ffffff;">&quot;
+</span><span style="color:#e9fdac;">s3Dir</span><span style="color:#ff5e5e;">=</span><span style="color:#ffffff;">&quot;</span><span style="color:#fbe3bf;">s3://mlbright-photos-0/0</span><span style="color:#ffffff;">&quot;
+</span><span>
+</span><span style="color:#ff5e5e;">for</span><span> entry </span><span style="color:#ff5e5e;">in </span><span style="color:#ffffff;">&quot;$</span><span style="color:#e9fdac;">path</span><span style="color:#ffffff;">&quot;</span><span>/</span><span style="color:#ff5e5e;">*; do
+</span><span>  </span><span style="color:#e9fdac;">name</span><span style="color:#ff5e5e;">=</span><span style="color:#ffffff;">&quot;$</span><span style="color:#fbe3bf;">(</span><span style="color:#6699cc;">echo </span><span style="color:#ffffff;">&quot;$</span><span style="color:#e9fdac;">entry</span><span style="color:#ffffff;">&quot; </span><span style="color:#ff5e5e;">| </span><span style="color:#e9fdac;">sed </span><span style="color:#ffffff;">&#39;</span><span style="color:#fbe3bf;">s/.*\///</span><span style="color:#ffffff;">&#39;</span><span style="color:#fbe3bf;">)</span><span style="color:#ffffff;">&quot;
+</span><span>  
+</span><span>  </span><span style="color:#ff5e5e;">if </span><span style="color:#6699cc;">[[ </span><span style="font-style:italic;color:#fc9354;">-d </span><span style="color:#ffffff;">&quot;$</span><span style="color:#e9fdac;">entry</span><span style="color:#ffffff;">&quot; </span><span style="color:#6699cc;">]]</span><span style="color:#ff5e5e;">; then
+</span><span>    </span><span style="color:#e9fdac;">aws</span><span> s3 cp</span><span style="font-style:italic;color:#fc9354;">  --recursive </span><span style="color:#ffffff;">&quot;$</span><span style="color:#e9fdac;">entry</span><span style="color:#ffffff;">&quot; &quot;$</span><span style="color:#e9fdac;">s3Dir</span><span style="color:#fbe3bf;">/</span><span style="color:#ffffff;">$</span><span style="color:#e9fdac;">name</span><span style="color:#fbe3bf;">/</span><span style="color:#ffffff;">&quot;
+</span><span>  </span><span style="color:#ff5e5e;">else
+</span><span>    </span><span style="color:#e9fdac;">aws</span><span> s3 cp </span><span style="color:#ffffff;">&quot;$</span><span style="color:#e9fdac;">entry</span><span style="color:#ffffff;">&quot; &quot;$</span><span style="color:#e9fdac;">s3Dir</span><span style="color:#fbe3bf;">/</span><span style="color:#ffffff;">&quot;
+</span><span>  </span><span style="color:#ff5e5e;">fi
+</span><span style="color:#ff5e5e;">done
+</span></code></pre>
+<h2 id="uploading-to-google-photos">Uploading to Google Photos</h2>
+<p>Uploading the files to Google was easy thanks to the <a href="https://github.com/gphotosuploader/gphotos-uploader-cli">Google Photos Uploader CLI</a>.
+I had over 40000 files and the daily Google Photos quota is 10000 file upload operations.
+The CLI continued attempting to upload even after the quota was exceeded and the API was returning HTTP 429 responses.
+So I fixed this and submitted a couple of pull requests to the project (<a href="https://github.com/gphotosuploader/gphotos-uploader-cli/pull/341">CLI</a>, <a href="https://github.com/gphotosuploader/google-photos-api-client-go/pull/75">lib</a>) and they were accepted!</p>
+<p>I ran a daily cron job for 5 days to run out my daily 10000 file upload limit.
+The cron job was:</p>
+<pre data-lang="bash" style="background-color:#191919;color:#f8f8f2;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#6699cc;">cd</span><span> /home/ubuntu </span><span style="color:#ff5e5e;">|| </span><span style="color:#6699cc;">exit
+</span><span style="color:#ff5e5e;">export </span><span style="color:#e9fdac;">GPHOTOS_CLI_TOKENSTORE_KEY</span><span style="color:#ff5e5e;">=</span><span style="color:#ffffff;">&quot;</span><span style="color:#fbe3bf;">&lt;redacted&gt;</span><span style="color:#ffffff;">&quot;
+</span><span style="color:#e9fdac;">/home/ubuntu/.go/bin/gphotos-uploader-cli</span><span style="font-style:italic;color:#fc9354;"> --debug</span><span> push </span><span style="color:#fdb082;">2</span><span style="color:#ff5e5e;">&gt;&amp;</span><span style="color:#fdb082;">1 </span><span style="color:#ff5e5e;">| </span><span style="color:#e9fdac;">tee</span><span style="font-style:italic;color:#fc9354;"> -a</span><span> gphotos-uploader-cli-modified.log
+</span></code></pre>
+<p>(Above, the <code>gphotos-uploader-cli</code> binary was compiled on the t2.micro machine where the GOPATH aws <code>/home/ubuntu/.go</code>.)</p>
+<p>The first time you run <code>gphotos-uploader-cli</code>, it walks you through the OAuth2 dance with Google and saves a token.
+I believe it is valid for 7 days.
+Subsequent runs via cron job succeeded without prompting the user.</p>
+<h2 id="deleting-the-files-off-of-icloud-com">Deleting the files off of iCloud.com</h2>
+<p>This was a scary moment.
+Before deleting 200GB of family memories, I did quite a few spot checks on Google Photos by looking at old pictures and videos: fun times!</p>
+<p>Then it was time to use the <a href="https://github.com/picklepete/pyicloud">pyicloud API</a> directly to delete all the files off iCloud.
+Via the browser, we are limited to deleting 1000 files at a time.
+Switching to Python instead of Bash, we can do:</p>
+<pre data-lang="python" style="background-color:#191919;color:#f8f8f2;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#ff5e5e;">from </span><span>pyicloud </span><span style="color:#ff5e5e;">import </span><span>PyiCloudService
+</span><span>
+</span><span>api </span><span style="color:#ff5e5e;">= </span><span style="color:#e9fdac;">PyiCloudService</span><span>(</span><span style="color:#ffffff;">&quot;</span><span style="color:#fbe3bf;">youriclouduser@mac.com</span><span style="color:#ffffff;">&quot;</span><span>)
+</span><span>
+</span><span style="color:#ff5e5e;">for </span><span>p </span><span style="color:#ff5e5e;">in </span><span>api.photos.all:
+</span><span>    p.</span><span style="color:#e9fdac;">delete</span><span>()
+</span></code></pre>
+<h2 id="conclusion">Conclusion</h2>
+<p>Using a Linux system in the cloud and a few open source tools, I was able to make better use of the cloud storage I was already paying for and make a backup copy of all my pictures.</p>
+<p>The costs for all this in AWS were not obvious to itemize because I was using the same machine for other purposes.
+However, it's fair to say that the S3 standard storage tier was more expensive than I thought it would be (about $10/month), so I will delete it or use a different storage tier since I have the Google Photos copy.
+Network egress was cheaper than I thought it would be, at a few extra dollars on the monthly AWS bill.</p>
+<p>By far, the most expensive item was the EBS volume, which I deleted once I was confident the upload to Google Photos was successful.</p>
+<p>I wonder if there's a better way to do all this.
+<a href="https://upspin.io/">Upspin</a>?.</p>
+
+    </div>
+
+    
+        <footer>
+            <hr>
+            <p>
+                
+                    Published by Martin-Louis Bright
+                
+                
+                
+                    
+                    tagged
+                    
+                        <a href="https://mlbright.github.io/tags/til/">TIL</a>
+                        
+                    
+                
+            </p>
+            
+            
+        </footer>
+    
+</article>
+
+
+    </body>
+
+</html>

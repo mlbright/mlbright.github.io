@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+      <title></title>
+
+      
+
+      
+          <link rel="stylesheet" href="https://mlbright.github.io/site.css">
+      
+
+      
+      
+    </head>
+
+    <body class="hack dark main container">
+        
+    
+        
+                
+                    <header>
+                        <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;mlbright.github.io">
+                                <span itemprop="name">Home</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;mlbright.github.io&#x2F;tags">
+                                <span itemprop="name">Tags</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;mlbright.github.io&#x2F;about">
+                                <span itemprop="name">About</span></a>
+                        
+                        </nav>
+                    </header>
+                
+            
+    
+
+<article itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+        <h1 itemprop="headline">On AWS, no need for SSH</h1>
+        <span class="muted">
+    <svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <circle cx="16" cy="16" r="14"/>
+        <path d="M16 8 L16 16 20 20"/>
+    </svg>
+    <span>2 minute read</span>
+    <svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/>
+    </svg>
+
+    Published: 2023-01-03
+</span>
+    </header>
+    <div itemprop="articleBody">
+      <p>There’s a way to get most of the goodness of SSH in AWS <strong>without opening ports, using public IP addresses, and modifying security groups or ACLs</strong>.
+This is also a way of executing scripts directly against an instance, and of <a href="https://aws.amazon.com/premiumsupport/knowledge-center/systems-manager-ssh-vpc-resources/">SSH tunneling</a> via AWS SSM.</p>
+<h2 id="ssm">SSM</h2>
+<p>Starting an SSM session on the command line is straightforward:</p>
+<pre data-lang="bash" style="background-color:#191919;color:#f8f8f2;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#e9fdac;">aws</span><span> ssm start-session</span><span style="font-style:italic;color:#fc9354;"> --target</span><span> i-0662da266763d5ea0
+</span></code></pre>
+<p>However, you can use SSH the old fashioned way...</p>
+<h2 id="ssh-over-ssm">SSH over SSM</h2>
+<p>Add this to your SSH config ($HOME/.ssh/config):</p>
+<pre data-lang="bash" style="background-color:#191919;color:#f8f8f2;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#6d6d6d;"># SSH over Session Manager
+</span><span style="color:#e9fdac;">host</span><span> i-</span><span style="color:#ff5e5e;">*</span><span> mi-</span><span style="color:#ff5e5e;">*
+</span><span>    </span><span style="color:#e9fdac;">ProxyCommand</span><span> sh</span><span style="font-style:italic;color:#fc9354;"> -c </span><span style="color:#ffffff;">&quot;</span><span style="color:#fbe3bf;">aws ssm start-session --target %h --document-name AWS-StartSSHSession --parameters &#39;portNumber=%p&#39;</span><span style="color:#ffffff;">&quot;
+</span></code></pre>
+<p>This allows the usual SSH invocation:</p>
+<pre data-lang="bash" style="background-color:#191919;color:#f8f8f2;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#e9fdac;">ssh</span><span style="font-style:italic;color:#fc9354;"> -i </span><span style="color:#e9fdac;">~</span><span>/.ssh/jump.pem ubuntu@i-0662da266763d5ea0
+</span></code></pre>
+<p>It also allows running a script on the remote AWS instance like:</p>
+<pre data-lang="bash" style="background-color:#191919;color:#f8f8f2;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#e9fdac;">ssh</span><span style="font-style:italic;color:#fc9354;"> -i </span><span style="color:#e9fdac;">~</span><span>/.ssh/jump.pem ubuntu@i-0662da266763d5ea0 </span><span style="color:#ffffff;">&#39;</span><span style="color:#fbe3bf;">bash -s</span><span style="color:#ffffff;">&#39; </span><span style="color:#ff5e5e;">&lt;</span><span> /tmp/something.sh
+</span></code></pre>
+<p>You can copy files to/from the machine:</p>
+<pre data-lang="bash" style="background-color:#191919;color:#f8f8f2;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#e9fdac;">scp</span><span style="font-style:italic;color:#fc9354;"> -i </span><span style="color:#e9fdac;">~</span><span>/.ssh/jump.pem ubuntu@i-0662da266763d5ea0:folder/something.json /tmp/something.json
+</span></code></pre>
+<p>Or better:</p>
+<pre data-lang="bash" style="background-color:#191919;color:#f8f8f2;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#e9fdac;">rsync</span><span style="font-style:italic;color:#fc9354;"> -e </span><span style="color:#ffffff;">&#39;</span><span style="color:#fbe3bf;">ssh -i ~/.ssh/jump.pem</span><span style="color:#ffffff;">&#39;</span><span> ubuntu@i-0662da266763d5ea0:folder/something.json /tmp/something.json
+</span></code></pre>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html">Installing</a> the SSM plugin into the AWS CLI</li>
+<li><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-getting-started-enable-ssh-connections.html">Getting started</a> SSH over SSM</li>
+<li>SSH <a href="https://aws.amazon.com/premiumsupport/knowledge-center/systems-manager-ssh-vpc-resources/">tunneling</a> via SSM</li>
+</ul>
+
+    </div>
+
+    
+        <footer>
+            <hr>
+            <p>
+                
+                    Published by Martin-Louis Bright
+                
+                
+                
+                    
+                    tagged
+                    
+                        <a href="https://mlbright.github.io/tags/til/">TIL</a>
+                        
+                    
+                
+            </p>
+            
+            
+        </footer>
+    
+</article>
+
+
+    </body>
+
+</html>

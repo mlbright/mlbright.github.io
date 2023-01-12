@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+      <title></title>
+
+      
+
+      
+          <link rel="stylesheet" href="https://mlbright.github.io/site.css">
+      
+
+      
+      
+    </head>
+
+    <body class="hack dark main container">
+        
+    
+        
+                
+                    <header>
+                        <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;mlbright.github.io">
+                                <span itemprop="name">Home</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;mlbright.github.io&#x2F;tags">
+                                <span itemprop="name">Tags</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;mlbright.github.io&#x2F;about">
+                                <span itemprop="name">About</span></a>
+                        
+                        </nav>
+                    </header>
+                
+            
+    
+
+<article itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+        <h1 itemprop="headline">Photos</h1>
+        <span class="muted">
+    <svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <circle cx="16" cy="16" r="14"/>
+        <path d="M16 8 L16 16 20 20"/>
+    </svg>
+    <span>1 minute read</span>
+    <svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/>
+    </svg>
+
+    Published: 2022-02-11
+</span>
+    </header>
+    <div itemprop="articleBody">
+      <p>If you have gigabytes of digital photos and movies, they can fill up your MacBook Air SSD very quickly.
+Sorting through them can be a challenge, and frankly I don't have a good way of doing this.</p>
+<h3 id="find-duplicates">Find duplicates</h3>
+<pre data-lang="bash" style="background-color:#191919;color:#f8f8f2;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#e9fdac;">find </span><span style="color:#ffffff;">&quot;$</span><span style="color:#e9fdac;">some_directory</span><span style="color:#ffffff;">&quot;</span><span style="font-style:italic;color:#fc9354;"> -type</span><span> f</span><span style="font-style:italic;color:#fc9354;"> -exec</span><span> md5sum {} </span><span style="color:#fdb082;">\; </span><span>\
+</span><span>    </span><span style="color:#ff5e5e;">| </span><span style="color:#e9fdac;">sort </span><span style="color:#ff5e5e;">| </span><span style="color:#e9fdac;">awk </span><span style="color:#ffffff;">&#39;</span><span style="color:#fbe3bf;">visited[$1]++</span><span style="color:#ffffff;">&#39; </span><span>\
+</span><span>    </span><span style="color:#ff5e5e;">| </span><span style="color:#e9fdac;">awk </span><span style="color:#ffffff;">&#39;</span><span style="color:#fbe3bf;">{$1=&quot;&quot;; print}</span><span style="color:#ffffff;">&#39; </span><span style="color:#ff5e5e;">| </span><span style="color:#e9fdac;">tee</span><span> duplicates-to-delete.txt
+</span></code></pre>
+<h3 id="find-similar-images">Find similar images</h3>
+<p>I wrote a <a href="https://github.com/mlbright/find-similar-images">program to find similar images</a>, and it found a few gigabytes of data to eliminate, but it was horribly slow while only comparing files of the same size.
+It was fun to write, but maybe not the most time efficient endeavour.</p>
+<h3 id="use-ai">Use AI</h3>
+<p>There's a neat thing called <a href="https://github.com/photoprism/photoprism">Photoprism</a>.
+It's quite slow, but it will categorize your pictures in all kinds of dimensions.
+This may help you to decide which pictures to delete, while also letting you browse them in a meaningful way.</p>
+
+    </div>
+
+    
+        <footer>
+            <hr>
+            <p>
+                
+                    Published by Martin-Louis Bright
+                
+                
+                
+                    
+                    tagged
+                    
+                        <a href="https://mlbright.github.io/tags/til/">TIL</a>
+                        
+                    
+                
+            </p>
+            
+            
+        </footer>
+    
+</article>
+
+
+    </body>
+
+</html>

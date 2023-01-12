@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+      <title></title>
+
+      
+
+      
+          <link rel="stylesheet" href="https://mlbright.github.io/site.css">
+      
+
+      
+      
+    </head>
+
+    <body class="hack dark main container">
+        
+    
+        
+                
+                    <header>
+                        <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;mlbright.github.io">
+                                <span itemprop="name">Home</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;mlbright.github.io&#x2F;tags">
+                                <span itemprop="name">Tags</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;mlbright.github.io&#x2F;about">
+                                <span itemprop="name">About</span></a>
+                        
+                        </nav>
+                    </header>
+                
+            
+    
+
+<article itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+        <h1 itemprop="headline">GitHub Enterprise site administration</h1>
+        <span class="muted">
+    <svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <circle cx="16" cy="16" r="14"/>
+        <path d="M16 8 L16 16 20 20"/>
+    </svg>
+    <span>6 minute read</span>
+    <svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/>
+    </svg>
+
+    Published: 2022-02-05
+</span>
+    </header>
+    <div itemprop="articleBody">
+      <p>For several years, my main responsibility at work was <a href="https://github.com/enterprise">GitHub Enterprise</a> system administration.
+Here is a collection of thoughts about the experience, in no particular order.</p>
+<h3 id="rate-limiting">Rate Limiting</h3>
+<p>GitHub Enterprise comes with <a href="https://docs.github.com/en/enterprise-server@3.3/admin/configuration/configuring-your-enterprise/configuring-rate-limits">built-in rate limiting</a>.
+Unfortunately, it isn't enabled by default, which is a shame.
+If you're running an instance with many users and large repositories (ours which had thousands of user accounts and hundreds of daily users, often with heavy workloads) you will likely run into performance issues. 
+GitHub Enterprise is a single VM instance.
+A single point of failure, and thus one can only scale it vertically.
+The default rate limits are reasonable for most workloads, but it's better to start somewhere and adjust them than allow abusive behavior to take root.</p>
+<h3 id="hardware">Hardware</h3>
+<p>Use dedicated, powerful hardware with lots of RAM and I/O.
+CPUs won't hurt either because Git is computing lots of hashes.</p>
+<h3 id="github-apps">GitHub Apps</h3>
+<p>Prefer and promote the use of <a href="https://docs.github.com/en/developers/apps/getting-started-with-apps/about-apps">GitHub Apps</a> instead of legacy OAuth apps or personal access tokens.
+It's a more secure and better scheme for integrating with the server.
+It also avoids the &quot;service account&quot; pattern, for which a shared user account is created to perform a role.
+GitHub Apps are first class actors in GitHub, but do not consume an Enterprise license.</p>
+<p>When I was an admin, there wasn't a way to install a GitHub App on all organizations.
+However, this can be very useful and <a href="https://gist.github.com/stoe/2eae33bd3d097a59b4a75e997a14c54d">someone wrote a script to do it</a>.</p>
+<h3 id="github-com">GitHub.com</h3>
+<p>Ask yourself if your organization really needs GitHub Enterprise as opposed to <a href="https://github.com">GitHub.com</a>.
+Do you really need the headache of administering your own instance?
+Be aware that new features are always rolled out to GitHub.com first, and often do not appear in Enterprise until 6 or more months later.</p>
+<p>Also, if you have large repositories, potentially with Git LFS files, it may be advantageous to have the dedicated computing resources of an Enterprise appliance.</p>
+<h3 id="hubble">Hubble</h3>
+<p>If you run GitHub Enterprise, you will need to have a sense of its usage that goes beyond what is provided by GitHub.
+There's a third party tool for that: <a href="https://github.com/Autodesk/hubble">Hubble</a>.</p>
+<h3 id="delegate-to-organization-owners">Delegate to organization owners</h3>
+<p>Make it clear that organization owners are responsible for managing the users, teams, and repositories in their organizations.
+There is no way site administrators can handle this better than the leaders who are managing the developer teams.
+Create an <em>owners manual</em> that:</p>
+<ul>
+<li>Provides context and elaborates on the <a href="https://docs.github.com/en/enterprise-server@3.3">official documentation</a> for:
+<ul>
+<li>Teams and users</li>
+<li>Repository permissions</li>
+<li>User responsibilities with regard to security</li>
+<li>GitHub Apps</li>
+</ul>
+</li>
+<li>Outlines the responsibilities of GitHub Owners</li>
+<li>Provides examples of correct usage, and usage anti-patterns</li>
+<li>Answers frequent questions</li>
+</ul>
+<p>Post the source of this manual in a Site Administration organization, so that it can be contributed to by everyone.
+This keeps users and org owners engaged and gives them the sense of ownership they need to operate effectively.</p>
+<h3 id="site-administration-organization">Site administration organization</h3>
+<p>Create a site administration organization within the instance.
+Publish the source for all code and instance specific documentation there.
+This will provide transparency to management and users and give them a sense of the effort that goes into administering the instance.</p>
+<h3 id="git-lfs-and-repository-hygiene">Git LFS and repository hygiene</h3>
+<p>Avoid using Git LFS if possible, and make it clear to users that it is a last resort.
+As rule of thumb, if a file isn't diff-able, then it shouldn't belong in Git.
+Set the <a href="https://docs.github.com/en/enterprise-server@3.1/admin/policies/enforcing-policies-for-your-enterprise/enforcing-repository-management-policies-in-your-enterprise#enforcing-a-policy-for-git-push-limits">global large file threshold</a> to something like 5Mb, only making exceptions on repo by repo basis.
+This will save you a lot of computing resources and user aggravation.
+The users will find better places to put large binaries, their repositories will clone faster, resulting in better builds and streamlined processes.</p>
+<h3 id="log-forwarding">Log forwarding</h3>
+<p><a href="https://docs.github.com/en/enterprise-server@3.3/admin/user-management/monitoring-activity-in-your-enterprise/log-forwarding">Do it</a>.</p>
+<h3 id="announcements-and-user-facing-docs">Announcements and user facing docs</h3>
+<p>Create a user facing documentation web site whose source is not hosted in GitHub Enterprise.
+(Instead consider GitHub.com?)
+The purpose of this web site is to keep users abreast of developments on the server.
+It should be available in case of outages to the Enterprise instance.</p>
+<p>Inform users about:</p>
+<ul>
+<li>Maintenance</li>
+<li>Outages</li>
+<li>Pointers to other documentation</li>
+<li>Frequent user questions</li>
+<li>New developments</li>
+<li>Upcoming versions and features</li>
+</ul>
+<h3 id="smoke-tests">Smoke tests</h3>
+<p>Monitoring the server should be a no brainer using standard tools.
+However, beyond that, it's good to run relatively frequent smoke tests.</p>
+<p>These might include:</p>
+<ul>
+<li>Clones of medium sized repositories</li>
+<li>Logging in and creating an issue</li>
+<li>Forking a repository</li>
+</ul>
+<p>These exercise what a user would experience, and are often far more indicative of server health than traditional metrics.</p>
+<p>Run these from different geos: this will often show that problems are localized, not an issue with the GitHub Enterprise server.</p>
+<p>Record and visualize the results.</p>
+<h3 id="slack-channel">Slack Channel</h3>
+<p>Create a Slack channel dedicated to Git and GitHub.
+Answer it frequently and collect common questions into the user facing documentation site.</p>
+<p>Consider separating the Git and GitHub concerns into 2 channels, but understand that this may also confuse users when issues straddle both things.</p>
+<p>Have an explicit and documented support policy on the user facing documentation site.
+This should set expectations about support on the Slack channel.</p>
+<h3 id="default-to-open">Default to &quot;Open&quot;</h3>
+<ul>
+<li>Favor public repositories to facilitate collaboration and <em>discovery</em>.</li>
+<li>Members of an organization or team should be <em>visible</em>, unless there is reason not to.</li>
+</ul>
+<h3 id="disable-github-pages">Disable GitHub Pages</h3>
+<p>Completely turn off <a href="https://docs.github.com/en/enterprise-server@3.3/pages/getting-started-with-github-pages/about-github-pages">GitHub Pages</a>.
+The most frequent and severe security issues for GitHub Enterprise were related to GitHub Pages.
+I'm betting the next high severity issue will also be.
+Best to simply turn the feature off.</p>
+<p>Users will find other destinations to publish the source of their web sites, documentation, or whatever.
+This cleanly separates the concerns of collaborating around <em>development</em>, which lie with GitHub, from the concerns of <em>publication or hosting</em>.
+Built artifacts, binaries, images and other items that do not really belong in Git will thus not be polluting the repositories.</p>
+<p><strong>That's it for now!</strong></p>
+
+    </div>
+
+    
+        <footer>
+            <hr>
+            <p>
+                
+                    Published by Martin-Louis Bright
+                
+                
+                
+                    
+                    tagged
+                    
+                        <a href="https://mlbright.github.io/tags/github/">GitHub</a>
+                        
+                            
+                                
+                                    and
+                                
+                            
+                        
+                    
+                        <a href="https://mlbright.github.io/tags/til/">TIL</a>
+                        
+                            
+                        
+                    
+                
+            </p>
+            
+            
+        </footer>
+    
+</article>
+
+
+    </body>
+
+</html>

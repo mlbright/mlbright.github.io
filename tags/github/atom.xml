@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+	<title> - GitHub</title>
+	<link href="https://mlbright.github.io/tags/github/atom.xml" rel="self" type="application/atom+xml"/>
+  <link href="https://mlbright.github.io"/>
+	<generator uri="https://www.getzola.org/">Zola</generator>
+	<updated>2022-02-05T00:00:00+00:00</updated>
+	<id>https://mlbright.github.io/tags/github/atom.xml</id>
+	<entry xml:lang="en">
+		<title>GitHub Enterprise site administration</title>
+		<published>2022-02-05T00:00:00+00:00</published>
+		<updated>2022-02-05T00:00:00+00:00</updated>
+		<link rel="alternate" href="https://mlbright.github.io/github-site-administration/" type="text/html"/>
+		<id>https://mlbright.github.io/github-site-administration/</id>
+		<content type="html">&lt;p&gt;For several years, my main responsibility at work was &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;enterprise&quot;&gt;GitHub Enterprise&lt;&#x2F;a&gt; system administration.
+Here is a collection of thoughts about the experience, in no particular order.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;rate-limiting&quot;&gt;Rate Limiting&lt;&#x2F;h3&gt;
+&lt;p&gt;GitHub Enterprise comes with &lt;a href=&quot;https:&#x2F;&#x2F;docs.github.com&#x2F;en&#x2F;enterprise-server@3.3&#x2F;admin&#x2F;configuration&#x2F;configuring-your-enterprise&#x2F;configuring-rate-limits&quot;&gt;built-in rate limiting&lt;&#x2F;a&gt;.
+Unfortunately, it isn&#x27;t enabled by default, which is a shame.
+If you&#x27;re running an instance with many users and large repositories (ours which had thousands of user accounts and hundreds of daily users, often with heavy workloads) you will likely run into performance issues. 
+GitHub Enterprise is a single VM instance.
+A single point of failure, and thus one can only scale it vertically.
+The default rate limits are reasonable for most workloads, but it&#x27;s better to start somewhere and adjust them than allow abusive behavior to take root.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;hardware&quot;&gt;Hardware&lt;&#x2F;h3&gt;
+&lt;p&gt;Use dedicated, powerful hardware with lots of RAM and I&#x2F;O.
+CPUs won&#x27;t hurt either because Git is computing lots of hashes.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;github-apps&quot;&gt;GitHub Apps&lt;&#x2F;h3&gt;
+&lt;p&gt;Prefer and promote the use of &lt;a href=&quot;https:&#x2F;&#x2F;docs.github.com&#x2F;en&#x2F;developers&#x2F;apps&#x2F;getting-started-with-apps&#x2F;about-apps&quot;&gt;GitHub Apps&lt;&#x2F;a&gt; instead of legacy OAuth apps or personal access tokens.
+It&#x27;s a more secure and better scheme for integrating with the server.
+It also avoids the &amp;quot;service account&amp;quot; pattern, for which a shared user account is created to perform a role.
+GitHub Apps are first class actors in GitHub, but do not consume an Enterprise license.&lt;&#x2F;p&gt;
+&lt;p&gt;When I was an admin, there wasn&#x27;t a way to install a GitHub App on all organizations.
+However, this can be very useful and &lt;a href=&quot;https:&#x2F;&#x2F;gist.github.com&#x2F;stoe&#x2F;2eae33bd3d097a59b4a75e997a14c54d&quot;&gt;someone wrote a script to do it&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;github-com&quot;&gt;GitHub.com&lt;&#x2F;h3&gt;
+&lt;p&gt;Ask yourself if your organization really needs GitHub Enterprise as opposed to &lt;a href=&quot;https:&#x2F;&#x2F;github.com&quot;&gt;GitHub.com&lt;&#x2F;a&gt;.
+Do you really need the headache of administering your own instance?
+Be aware that new features are always rolled out to GitHub.com first, and often do not appear in Enterprise until 6 or more months later.&lt;&#x2F;p&gt;
+&lt;p&gt;Also, if you have large repositories, potentially with Git LFS files, it may be advantageous to have the dedicated computing resources of an Enterprise appliance.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;hubble&quot;&gt;Hubble&lt;&#x2F;h3&gt;
+&lt;p&gt;If you run GitHub Enterprise, you will need to have a sense of its usage that goes beyond what is provided by GitHub.
+There&#x27;s a third party tool for that: &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Autodesk&#x2F;hubble&quot;&gt;Hubble&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;delegate-to-organization-owners&quot;&gt;Delegate to organization owners&lt;&#x2F;h3&gt;
+&lt;p&gt;Make it clear that organization owners are responsible for managing the users, teams, and repositories in their organizations.
+There is no way site administrators can handle this better than the leaders who are managing the developer teams.
+Create an &lt;em&gt;owners manual&lt;&#x2F;em&gt; that:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Provides context and elaborates on the &lt;a href=&quot;https:&#x2F;&#x2F;docs.github.com&#x2F;en&#x2F;enterprise-server@3.3&quot;&gt;official documentation&lt;&#x2F;a&gt; for:
+&lt;ul&gt;
+&lt;li&gt;Teams and users&lt;&#x2F;li&gt;
+&lt;li&gt;Repository permissions&lt;&#x2F;li&gt;
+&lt;li&gt;User responsibilities with regard to security&lt;&#x2F;li&gt;
+&lt;li&gt;GitHub Apps&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;Outlines the responsibilities of GitHub Owners&lt;&#x2F;li&gt;
+&lt;li&gt;Provides examples of correct usage, and usage anti-patterns&lt;&#x2F;li&gt;
+&lt;li&gt;Answers frequent questions&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Post the source of this manual in a Site Administration organization, so that it can be contributed to by everyone.
+This keeps users and org owners engaged and gives them the sense of ownership they need to operate effectively.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;site-administration-organization&quot;&gt;Site administration organization&lt;&#x2F;h3&gt;
+&lt;p&gt;Create a site administration organization within the instance.
+Publish the source for all code and instance specific documentation there.
+This will provide transparency to management and users and give them a sense of the effort that goes into administering the instance.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;git-lfs-and-repository-hygiene&quot;&gt;Git LFS and repository hygiene&lt;&#x2F;h3&gt;
+&lt;p&gt;Avoid using Git LFS if possible, and make it clear to users that it is a last resort.
+As rule of thumb, if a file isn&#x27;t diff-able, then it shouldn&#x27;t belong in Git.
+Set the &lt;a href=&quot;https:&#x2F;&#x2F;docs.github.com&#x2F;en&#x2F;enterprise-server@3.1&#x2F;admin&#x2F;policies&#x2F;enforcing-policies-for-your-enterprise&#x2F;enforcing-repository-management-policies-in-your-enterprise#enforcing-a-policy-for-git-push-limits&quot;&gt;global large file threshold&lt;&#x2F;a&gt; to something like 5Mb, only making exceptions on repo by repo basis.
+This will save you a lot of computing resources and user aggravation.
+The users will find better places to put large binaries, their repositories will clone faster, resulting in better builds and streamlined processes.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;log-forwarding&quot;&gt;Log forwarding&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;docs.github.com&#x2F;en&#x2F;enterprise-server@3.3&#x2F;admin&#x2F;user-management&#x2F;monitoring-activity-in-your-enterprise&#x2F;log-forwarding&quot;&gt;Do it&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;announcements-and-user-facing-docs&quot;&gt;Announcements and user facing docs&lt;&#x2F;h3&gt;
+&lt;p&gt;Create a user facing documentation web site whose source is not hosted in GitHub Enterprise.
+(Instead consider GitHub.com?)
+The purpose of this web site is to keep users abreast of developments on the server.
+It should be available in case of outages to the Enterprise instance.&lt;&#x2F;p&gt;
+&lt;p&gt;Inform users about:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Maintenance&lt;&#x2F;li&gt;
+&lt;li&gt;Outages&lt;&#x2F;li&gt;
+&lt;li&gt;Pointers to other documentation&lt;&#x2F;li&gt;
+&lt;li&gt;Frequent user questions&lt;&#x2F;li&gt;
+&lt;li&gt;New developments&lt;&#x2F;li&gt;
+&lt;li&gt;Upcoming versions and features&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;smoke-tests&quot;&gt;Smoke tests&lt;&#x2F;h3&gt;
+&lt;p&gt;Monitoring the server should be a no brainer using standard tools.
+However, beyond that, it&#x27;s good to run relatively frequent smoke tests.&lt;&#x2F;p&gt;
+&lt;p&gt;These might include:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Clones of medium sized repositories&lt;&#x2F;li&gt;
+&lt;li&gt;Logging in and creating an issue&lt;&#x2F;li&gt;
+&lt;li&gt;Forking a repository&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;These exercise what a user would experience, and are often far more indicative of server health than traditional metrics.&lt;&#x2F;p&gt;
+&lt;p&gt;Run these from different geos: this will often show that problems are localized, not an issue with the GitHub Enterprise server.&lt;&#x2F;p&gt;
+&lt;p&gt;Record and visualize the results.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;slack-channel&quot;&gt;Slack Channel&lt;&#x2F;h3&gt;
+&lt;p&gt;Create a Slack channel dedicated to Git and GitHub.
+Answer it frequently and collect common questions into the user facing documentation site.&lt;&#x2F;p&gt;
+&lt;p&gt;Consider separating the Git and GitHub concerns into 2 channels, but understand that this may also confuse users when issues straddle both things.&lt;&#x2F;p&gt;
+&lt;p&gt;Have an explicit and documented support policy on the user facing documentation site.
+This should set expectations about support on the Slack channel.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;default-to-open&quot;&gt;Default to &amp;quot;Open&amp;quot;&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Favor public repositories to facilitate collaboration and &lt;em&gt;discovery&lt;&#x2F;em&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;Members of an organization or team should be &lt;em&gt;visible&lt;&#x2F;em&gt;, unless there is reason not to.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;disable-github-pages&quot;&gt;Disable GitHub Pages&lt;&#x2F;h3&gt;
+&lt;p&gt;Completely turn off &lt;a href=&quot;https:&#x2F;&#x2F;docs.github.com&#x2F;en&#x2F;enterprise-server@3.3&#x2F;pages&#x2F;getting-started-with-github-pages&#x2F;about-github-pages&quot;&gt;GitHub Pages&lt;&#x2F;a&gt;.
+The most frequent and severe security issues for GitHub Enterprise were related to GitHub Pages.
+I&#x27;m betting the next high severity issue will also be.
+Best to simply turn the feature off.&lt;&#x2F;p&gt;
+&lt;p&gt;Users will find other destinations to publish the source of their web sites, documentation, or whatever.
+This cleanly separates the concerns of collaborating around &lt;em&gt;development&lt;&#x2F;em&gt;, which lie with GitHub, from the concerns of &lt;em&gt;publication or hosting&lt;&#x2F;em&gt;.
+Built artifacts, binaries, images and other items that do not really belong in Git will thus not be polluting the repositories.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;That&#x27;s it for now!&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+</content>
+	</entry>
+</feed>

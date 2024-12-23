@@ -1,10 +1,3 @@
-+++
-title = "Photos"
-date = 2022-02-11
-[taxonomies] 
-tags=["TIL"]
-+++
-
 If you have gigabytes of digital photos and movies, they can fill up your MacBook Air SSD very quickly.
 Sorting through them can be a challenge, and frankly I don't have a good way of doing this.
 

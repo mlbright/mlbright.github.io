@@ -1,10 +1,3 @@
-+++
-title = "Start with draft pull requests"
-date = 2023-01-06
-[taxonomies] 
-tags=["TIL"]
-+++
-
 It would be nice if GitHub pull requests (PRs) could be created in draft mode by default.
 If this was the case, when the PR was ready for review and converted to "regular" mode, more elaborate tests and automations could be triggered off of the `ready_for_review` event.
 

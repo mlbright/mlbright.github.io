@@ -1,10 +1,3 @@
-+++
-title = "On AWS, no need for SSH"
-date = 2023-01-03
-[taxonomies] 
-tags=["TIL"]
-+++
-
 There’s a way to get most of the goodness of SSH in AWS **without opening ports, using public IP addresses, and modifying security groups or ACLs**.
 This is also a way of executing scripts directly against an instance, and of [SSH tunneling][tunneling] via AWS SSM.
 

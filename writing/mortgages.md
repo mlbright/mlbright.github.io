@@ -1,10 +1,3 @@
-+++
-title = "Mortgages"
-date = 2022-02-11
-[taxonomies] 
-tags=["TIL"]
-+++
-
 Mortgages are terrifying.
 For most Canadians, a mortgage on their primary home may be the biggest financial transaction in their lives.
 It makes sense to try and understand them.

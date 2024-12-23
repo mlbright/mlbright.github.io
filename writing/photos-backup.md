@@ -1,10 +1,3 @@
-+++
-title = "iCloud Photos Reset"
-date = 2022-12-29
-[taxonomies] 
-tags=["TIL"]
-+++
-
 My Apple [iCloud.com][icloud] account's 200GB storage limit was fast approaching when I realized that
 most of the 2TB storage from my Google One subscription was unused.
 

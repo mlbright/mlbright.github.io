@@ -1,10 +1,3 @@
-+++
-title = "Removing a password from a PDF"
-date = 2022-02-06
-[taxonomies] 
-tags=["TIL"]
-+++
-
 If a PDF document has a password, it can be handy to remove that password permanently.
 
 On MacOS,
